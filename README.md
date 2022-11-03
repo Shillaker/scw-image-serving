@@ -25,6 +25,7 @@ firefox index.html
 Deploy the container by running the following:
 
 ```
+npm install
 serverless deploy
 ```
 
