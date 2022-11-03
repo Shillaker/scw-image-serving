@@ -19,5 +19,6 @@ custom:
    server:
      privacy: private
      directory: container
+     minScale: 1
      env:
        local: local

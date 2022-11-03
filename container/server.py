@@ -1,7 +1,6 @@
-from flask import Flask, send_file
+from flask import Flask, send_file, make_response
 from datetime import datetime
 from os.path import exists
-import json
 
 app = Flask(__name__)
 
@@ -9,22 +8,34 @@ DUMMY_IMAGE = "/images/dummy.png"
 MIME_TYPE = "image/png"
 
 
-@app.route("/")
+def add_cors_headers(response):
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add("Access-Control-Allow-Headers", "*")
+    response.headers.add("Access-Control-Allow-Methods", "*")
+
+    return response
+
+
+@app.route("/", methods=["GET", "POST", "OPTIONS"])
 def root():
     now = datetime.now()
     req_time = now.strftime("%H:%M:%S")
-    return json.dumps({"message": f"Hello at {req_time}"})
+
+    response = make_response(f"Hello at {req_time}")
+    return add_cors_headers(response)
 
 
-@app.route("/img/<filename>")
+@app.route("/img/<filename>", methods=["GET", "POST", "OPTIONS"])
 def img(filename):
     img_path = f"/images/{filename}"
 
     # Check if image exists
-    if exists(img_path):
-        return send_file(img_path, mimetype=MIME_TYPE)
-    else:
-        return send_file(DUMMY_IMAGE, mimetype=MIME_TYPE)
+    img_path = img_path if exists(img_path) else DUMMY_IMAGE
+
+    print(f"Serving image at {img_path}")
+
+    response = send_file(img_path, mimetype=MIME_TYPE)
+    return add_cors_headers(response)
 
 
 if __name__ == "__main__":
