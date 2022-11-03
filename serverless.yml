@@ -1,0 +1,24 @@
+service: image-server
+configValidationMode: off
+
+provider:
+  name: scaleway
+  runtime: python310
+
+plugins:
+  - "serverless-scaleway-functions"
+
+package:
+  patterns:
+    - '!node_modules/**'
+    - '!.gitignore'
+    - '!.git/**'
+
+custom:
+ containers:
+   server:
+     privacy: private
+     directory: container
+     minScale: 1
+     env:
+       local: local
