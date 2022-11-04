@@ -1,0 +1,23 @@
+server {
+  listen 80;
+  server_name gateway;
+
+  location / {
+    add_header 'Access-Control-Allow-Origin' '*';
+    add_header 'Access-Control-Allow-Credentials' 'true';
+    add_header 'Access-Control-Allow-Headers' '*'
+    add_header 'Access-Control-Allow-Methods' 'GET,POST,OPTIONS,PUT,DELETE,PATCH';
+
+    if ($request_method = 'OPTIONS') {
+      add_header 'Content-Type' 'text/plain charset=UTF-8';
+      add_header 'Content-Length' 0;
+      return 204;
+    }
+
+    proxy_redirect off;
+    proxy_set_header host $host;
+    proxy_set_header X-real-ip $remote_addr;
+    proxy_set_header X-forward-for $proxy_add_x_forwarded_for;
+    proxy_pass ${SERVER_CONTAINER_URL}
+  }
+}

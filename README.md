@@ -2,19 +2,20 @@
 
 Demonstration using [Scaleway Serverless Containers](https://www.scaleway.com/en/serverless-containers/) from the browser to handle normal API requests and serve images.
 
-Please see the [Scaleway Serverless Framework Plugin](https://github.com/scaleway/serverless-scaleway-functions) for setup instructions.
+## Setup
 
-*Note that Serving images from Serverless containers is not recommended, instead you should use a CDN.*
+- Install and configure [Terraform](https://developer.hashicorp.com/terraform/tutorials/certification-associate-tutorials/install-cli)
+- Install the [Scaleway CLI](https://github.com/scaleway/scaleway-cli#installation)
 
 ## Local test
 
-Test locally by running:
+Test the server locally by running:
 
 ```
 python3 container/server.py
 ```
 
-Then opening `index.html` in your browser, e.g.
+Then open `index.html` in your browser, e.g.
 
 ```
 firefox index.html
@@ -22,11 +23,8 @@ firefox index.html
 
 ## Running on serverless containers
 
-Deploy the container by running the following:
-
 ```
-npm install
-serverless deploy
+terraform init
 ```
 
 This will return a URL through which you can invoke the function.
