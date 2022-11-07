@@ -69,11 +69,6 @@ resource "scaleway_container" "gateway_container" {
 
 # Token for private container
 # https://registry.terraform.io/providers/scaleway/scaleway/latest/docs/resources/container_token
-resource scaleway_container_token token_namespace {
-  namespace_id = scaleway_container_namespace.main.id
-  expires_at = "2023-03-03T12:00:00+02:00"
-}
-
 resource scaleway_container_token server {
   container_id = scaleway_container.server_container.id
 }
