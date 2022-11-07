@@ -1,6 +1,12 @@
 DOCKER_REGISTRY=rg.fr-par.scw.cloud
 DOCKER_REGISTRY_NS=cors-demo
 
+GATEWAY_VERSION=0.0.1
+SERVER_VERSION=0.0.1
+
+GATEWAY_TAG=$(DOCKER_REGISTRY)/$(DOCKER_REGISTRY_NS)/gateway:$(GATEWAY_VERSION)
+SERVER_TAG=$(DOCKER_REGISTRY)/$(DOCKER_REGISTRY_NS)/server:$(SERVER_VERSION)
+
 .PHONY: create-namespace
 create-namespace:
 	scw registry namespace create name=$(DOCKER_REGISTRY_NS)
@@ -11,19 +17,19 @@ docker-login:
 
 .PHONY: build-server
 build-server:
-	cd server && docker build -t $(DOCKER_REGISTRY)/$(DOCKER_REGISTRY_NS)/server:0.0.1 .
+	cd server && docker build -t $(SERVER_TAG) .
 
 .PHONY: build-gateway
 build-gateway:
-	cd server && docker build -t $(DOCKER_REGISTRY)/$(DOCKER_REGISTRY_NS)/gateway:0.0.1 .
+	cd gateway && docker build -t $(GATEWAY_TAG) .
 
 .PHONY: push-server
 push-server:
-	docker push $(DOCKER_REGISTRY)/$(DOCKER_REGISTRY_NS)/server:0.0.1
+	docker push $(SERVER_TAG)
 
 .PHONY: push-gateway
 push-gateway:
-	docker push $(DOCKER_REGISTRY)/$(DOCKER_REGISTRY_NS)/gateway:0.0.1
+	docker push $(GATEWAY_TAG)
 
 .PHONY: tf-init
 tf-init:
@@ -35,5 +41,5 @@ tf-plan:
 
 .PHONY: tf-apply
 tf-apply:
-	cd terraform && terraform apply -var-file=vars/main.tfvars
+	cd terraform && terraform apply -auto-approve -var-file=vars/main.tfvars
 

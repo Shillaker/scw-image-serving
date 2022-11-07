@@ -3,6 +3,7 @@ variable "project_id" {
   description = ""
 }
 
+# Terraform provider
 terraform {
   required_providers {
     scaleway = {
@@ -20,6 +21,7 @@ provider "scaleway" {
   region = "fr-par"
 }
 
+# Container namespace and containers
 # https://registry.terraform.io/providers/scaleway/scaleway/latest/docs/resources/container
 resource "scaleway_container_namespace" "main" {
   project_id  = var.project_id
@@ -32,15 +34,15 @@ resource "scaleway_container" "server_container" {
   description    = "Container for the server"
   namespace_id   = scaleway_container_namespace.main.id
   registry_image = "rg.fr-par.scw.cloud/cors-demo/server:0.0.1"
-  port           = 80
+  port           = 8080
   min_scale      = 2
   max_scale      = 2
   privacy        = "private"
   deploy         = true
 
   timeouts {
-    create = "10m"
-    update = "10m"
+    create = "15m"
+    update = "15m"
   }
 }
 
@@ -49,7 +51,7 @@ resource "scaleway_container" "gateway_container" {
   description    = "Container for the gateway"
   namespace_id   = scaleway_container_namespace.main.id
   registry_image = "rg.fr-par.scw.cloud/cors-demo/gateway:0.0.1"
-  port           = 80
+  port           = 8080
   min_scale      = 1
   max_scale      = 1
   privacy        = "public"
@@ -60,18 +62,43 @@ resource "scaleway_container" "gateway_container" {
   }
 
   timeouts {
-    create = "10m"
-    update = "10m"
+    create = "15m"
+    update = "15m"
   }
 }
 
+# Token for private container
 # https://registry.terraform.io/providers/scaleway/scaleway/latest/docs/resources/container_token
-resource scaleway_container_token namespace {
+resource scaleway_container_token token_namespace {
   namespace_id = scaleway_container_namespace.main.id
   expires_at = "2023-03-03T12:00:00+02:00"
 }
 
-resource scaleway_container_token container {
+resource scaleway_container_token server {
   container_id = scaleway_container.server_container.id
+}
+
+resource local_file token {
+  filename = "../token"
+  content = scaleway_container_token.server.token
+}
+
+# Template HTML file
+data template_file html_data {
+  template = "${file("../index.tftpl")}"
+  vars = {
+    gateway_func_url = "${scaleway_container.server_container.domain_name}",
+    server_auth_token = "${scaleway_container_token.server.token}",
+  }
+}
+
+resource local_file html {
+  filename = "../index.html"
+  content = templatefile(
+    "../index.tftpl", {
+      gateway_func_url = "${scaleway_container.server_container.domain_name}",
+      server_auth_token = "${scaleway_container_token.server.token}",
+    }
+  )
 }
 

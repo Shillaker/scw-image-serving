@@ -6,13 +6,14 @@ Demonstration using [Scaleway Serverless Containers](https://www.scaleway.com/en
 
 - Install and configure [Terraform](https://developer.hashicorp.com/terraform/tutorials/certification-associate-tutorials/install-cli)
 - Install the [Scaleway CLI](https://github.com/scaleway/scaleway-cli#installation)
+- Install [Docker compose](https://docs.docker.com/compose/) to test locally
 
 ## Local test
 
-Test the server locally by running:
+Test the setup locally by running:
 
 ```
-python3 container/server.py
+docker-compose up
 ```
 
 Then open `index.html` in your browser, e.g.
@@ -23,26 +24,36 @@ firefox index.html
 
 ## Running on serverless containers
 
-```
-terraform init
-```
-
-This will return a URL through which you can invoke the function.
-
-Then run the following to generate your token:
+Log in to registry, create a namespace and build and push the images:
 
 ```
-serverless jwt
+make docker-login
+make create-namespace
+
+make build-gateway push-gateway
+make build-server push-server
 ```
 
-Open `index.html` and set:
+Set up Terraform with:
 
-- `token` to your function's token
-- `functionUrl` to your function's URL
+```
+make tf-init
+```
 
-Then open the `index.html` file in your browser, e.g.
+Run plan, have a look at what it will created:
+
+```
+make tf-plan
+```
+
+Deploy with:
+
+```
+make tf-apply
+```
+
+This will template a file at `index.html` in the root of the project, with the function URL and token populated. You can then open `index.html` in your browser, e.g.
 
 ```
 firefox index.html
 ```
-

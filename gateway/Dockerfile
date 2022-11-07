@@ -1,3 +1,4 @@
-FROM nginx
+FROM nginx:1.23
 
-COPY conf.template /etc/nginx/template/default.conf.template
+# See env var subs: https://hub.docker.com/_/nginx/
+COPY conf.template /etc/nginx/templates/default.conf.template

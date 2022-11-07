@@ -5,9 +5,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
     <script>
-      // COPY YOUR FUNCTION URL AND TOKEN HERE
-      var functionUrl = 'http://localhost:8080';
-      var token = 'your token';
+      var functionUrl = '${ gateway_func_url }';
+      var token = '${ server_auth_token }';
 
       // Build the request
       var imgUrl = functionUrl + '/img/hello.png';
