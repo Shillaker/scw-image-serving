@@ -2,47 +2,59 @@
 
 Demonstration using [Scaleway Serverless Containers](https://www.scaleway.com/en/serverless-containers/) from the browser to handle normal API requests and serve images.
 
-Please see the [Scaleway Serverless Framework Plugin](https://github.com/scaleway/serverless-scaleway-functions) for setup instructions.
+## Setup
 
-*Note that Serving images from Serverless containers is not recommended, instead you should use a CDN.*
+- Install and configure [Terraform](https://developer.hashicorp.com/terraform/tutorials/certification-associate-tutorials/install-cli)
+- Install the [Scaleway CLI](https://github.com/scaleway/scaleway-cli#installation)
+- Install [Docker compose](https://docs.docker.com/compose/) to test locally
 
-## Local test
+## Running on serverless containers
 
-Test locally by running:
+Log in to registry, create a namespace and build and push the images:
 
 ```
-python3 container/server.py
+make docker-login
+make create-namespace
+
+make build-gateway push-gateway
+make build-server push-server
 ```
 
-Then opening `index.html` in your browser, e.g.
+Set up Terraform with:
+
+```
+make tf-init
+```
+
+Run plan, have a look at what it will created:
+
+```
+make tf-plan
+```
+
+Deploy with:
+
+```
+make tf-apply
+```
+
+This will template a file at `index.html` in the root of the project, with the function URL and token populated. You can then open `index.html` in your browser, e.g.
 
 ```
 firefox index.html
 ```
 
-## Running on serverless containers
+## Local test
 
-Deploy the container by running the following:
+Test the setup locally by running the deploy, then modifying `functionUrl` in `index.html` to `localhost:8080`.
 
-```
-npm install
-serverless deploy
-```
-
-This will return a URL through which you can invoke the function.
-
-Then run the following to generate your token:
+You can then run:
 
 ```
-serverless jwt
+docker-compose up
 ```
 
-Open `index.html` and set:
-
-- `token` to your function's token
-- `functionUrl` to your function's URL
-
-Then open the `index.html` file in your browser, e.g.
+Then open `index.html` in your browser, e.g.
 
 ```
 firefox index.html
