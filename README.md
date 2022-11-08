@@ -8,20 +8,6 @@ Demonstration using [Scaleway Serverless Containers](https://www.scaleway.com/en
 - Install the [Scaleway CLI](https://github.com/scaleway/scaleway-cli#installation)
 - Install [Docker compose](https://docs.docker.com/compose/) to test locally
 
-## Local test
-
-Test the setup locally by running:
-
-```
-docker-compose up
-```
-
-Then open `index.html` in your browser, e.g.
-
-```
-firefox index.html
-```
-
 ## Running on serverless containers
 
 Log in to registry, create a namespace and build and push the images:
@@ -57,3 +43,20 @@ This will template a file at `index.html` in the root of the project, with the f
 ```
 firefox index.html
 ```
+
+## Local test
+
+Test the setup locally by running the deploy, then modifying `functionUrl` in `index.html` to `localhost:8080`.
+
+You can then run:
+
+```
+docker-compose up
+```
+
+Then open `index.html` in your browser, e.g.
+
+```
+firefox index.html
+```
+

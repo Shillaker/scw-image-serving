@@ -73,7 +73,7 @@ resource scaleway_container_token server {
   container_id = scaleway_container.server_container.id
 }
 
-resource local_file token {
+resource local_sensitive_file token {
   filename = "../token"
   content = scaleway_container_token.server.token
 }
@@ -82,18 +82,17 @@ resource local_file token {
 data template_file html_data {
   template = "${file("../index.tftpl")}"
   vars = {
-    gateway_func_url = "${scaleway_container.server_container.domain_name}",
+    gateway_func_url = "${scaleway_container.gateway_container.domain_name}",
     server_auth_token = "${scaleway_container_token.server.token}",
   }
 }
 
-resource local_file html {
+resource local_sensitive_file html {
   filename = "../index.html"
   content = templatefile(
     "../index.tftpl", {
-      gateway_func_url = "${scaleway_container.server_container.domain_name}",
+      gateway_func_url = "${scaleway_container.gateway_container.domain_name}",
       server_auth_token = "${scaleway_container_token.server.token}",
     }
   )
 }
-
